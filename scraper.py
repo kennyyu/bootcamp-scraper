@@ -45,7 +45,6 @@ def get_results(html):
     soup = bs4.BeautifulSoup(html)
     result_divs = soup.find_all(is_result_div)
     for result_div in result_divs:
-        print result_div
         title_div = result_div.find(class_="productTitle")
         new_price_div = result_div.find(class_="newPrice")
         used_price_div = result_div.find(class_="usedNewPrice")
@@ -73,31 +72,32 @@ def get_results(html):
         results.append(result)
     return results
 
-def write_results(filename, results):
+def write_results(writer, results):
     """ Write results in csv format to filename. """
-    csvfile = open(filename, "wb")
-    writer = csv.DictWriter(csvfile, 
+    for result in results:
+        writer.writerow(result.__dict__) # get dict of the object's attributes
+
+def main(search, outfile):
+    # Create file to append csv results and write the header columns
+    csvfile = open(outfile, "wb")
+    writer = csv.DictWriter(csvfile,
                             ["title", "author", "link",
                              "new_price", "used_price"])
     writer.writeheader()
-    for result in results:
-        writer.writerow(result.__dict__) # get dict of the object's attributes
-    csvfile.close()
-
-def main(search, outfile):
-    page = 1
-    results = []
 
     # Keep scraping all the pages until we find a page with no results.
+    page = 1
     while True:
         urlobject = urllib.urlopen(AMAZON_URL + search + "&page=" + str(page))
-        new_results = get_results(urlobject.read())
-        if len(new_results) == 0:
+        results = get_results(urlobject.read())
+        if len(results) == 0:
             break
         else:
-            results += new_results
+            write_results(writer, results)
             page += 1
-    write_results(outfile, results)
+
+    # Close our file handle
+    csvfile.close()
 
 if __name__ == "__main__":
     args = vars(argparser.parse_args())
