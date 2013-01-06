@@ -37,7 +37,7 @@ def is_result_div(tag):
         return False
     return tag.has_key("id") and str(tag["id"]).startswith("result_")
 
-def get_items(html):
+def get_results(html):
     # list to keep track of our extracted values
     results = []
 
@@ -70,7 +70,7 @@ def get_items(html):
         results.append(result)
     return results
 
-def write_csv(filename, results):
+def write_results(filename, results):
     """ Write results in csv format to filename. """
     csvfile = open(filename, "wb")
     writer = csv.DictWriter(csvfile, 
@@ -88,13 +88,13 @@ def main(search, outfile):
     # Keep scraping all the pages until we find a page with no results.
     while True:
         urlobject = urllib.urlopen(AMAZON_URL + search + "&page=" + str(page))
-        new_results = get_items(urlobject.read())
+        new_results = get_results(urlobject.read())
         if len(new_results) == 0:
             break
         else:
             results += new_results
             page += 1
-    write_csv(outfile, results)
+    write_results(outfile, results)
 
 if __name__ == "__main__":
     args = vars(argparser.parse_args())
