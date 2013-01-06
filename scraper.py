@@ -79,10 +79,10 @@ def get_results(html):
         # Remove $ sign and return amount as a float
         new_price = 0.
         if new_price_div is not None:
-            new_price = float(float_of_money(new_price_div.span.string))
+            new_price = float_of_money(new_price_div.span.string)
         used_price = 0.
         if used_price_div is not None and used_price_div.div.span is not None:
-            used_price = float(float_of_money(used_price_div.div.span.string))
+            used_price = float_of_money(used_price_div.div.span.string)
 
         # Create a result object to encapsulate the fields that we want
         result = Result(link, title, author, new_price, used_price)
