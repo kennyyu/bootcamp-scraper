@@ -22,4 +22,12 @@ To specify the search phrase, use `-s`/`--search` (this is required). The defaul
 
     python scraper.py --search=ocaml --outfile=ocaml.csv
 
-This should create the file `ocaml.csv` in the current directory with column headers `title,author,link,new_price,used_price`.
+This should create the file `ocaml.csv` in the current directory with column headers `title,author,link,new_price,used_price`. To start scraping at a different page, use the `-p`/`--page` flag:
+
+    python scraper.py --search="introduction to algorithms" --outfile=alg.csv --page=3
+
+To append to an already existing csv file, use the `-a`/`--append` flag:
+
+    python scraper.py --search=haskell --outfile=ocaml.csv --append
+
+The results of this search will be appended to the end of `ocaml.csv`.
