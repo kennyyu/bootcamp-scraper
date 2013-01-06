@@ -20,16 +20,16 @@ def remove_non_ascii(s):
 class Result:
     """ Encapsulates a result of a search query. """
 
-    def __init__(self, link, title, author, new_price, old_price):
+    def __init__(self, link, title, author, new_price, used_price):
         self.link = link
         self.title = title
         self.author = author
         self.new_price = new_price
-        self.old_price = old_price
+        self.used_price = used_price
 
     def __str__(self):
-        return "link: %s\ntitle: %s\nauthor: %s\nnew:  %f\nold: %f" % \
-            (self.link, self.title, self.author, self.new_price, self.old_price)
+        return "link: %s\ntitle: %s\nauthor: %s\nnew:  %f\nused: %f" % \
+            (self.link, self.title, self.author, self.new_price, self.used_price)
 
 def is_result_div(tag):
     """ Returns true for divs with ids starting with 'result_'. """
@@ -75,7 +75,7 @@ def write_csv(filename, results):
     csvfile = open(filename, "wb")
     writer = csv.DictWriter(csvfile, 
                             ["title", "author", "link",
-                             "new_price", "old_price"])
+                             "new_price", "used_price"])
     writer.writeheader()
     for result in results:
         writer.writerow(result.__dict__) # get dict of the object's attributes
