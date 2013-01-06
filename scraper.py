@@ -100,10 +100,10 @@ def main(search, outfile):
         else:
             write_results(writer, results)
             csvfile.flush()
-            page += 1
             total += nresults
             print "Scraped %d results from page %d, total results: %d" % \
                 (nresults, page, total)
+            page += 1
 
     # Close our file handle
     csvfile.close()
