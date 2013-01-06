@@ -15,7 +15,19 @@ argparser.add_argument("-o", "--outfile", type=str, dest="outfile",
 
 def remove_non_ascii(s):
     """ Remove non ascii characters (e.g. unicode). """
+    if s is None:
+        return ""
     return "".join(filter(lambda x: ord(x) < 128, s))
+
+def float_of_money(s):
+    """
+    Converts the money string to a float. For amounts in the format
+        $30.00 - $65.00
+    this will return the maximum bound as a float (65.00)
+    """
+    s = str(s)
+    s = s.replace(",", "") # Remove commas in numbers
+    return float(s[s.rfind("$") + 1:])
 
 class Result:
     """ Encapsulates a result of a search query. """
@@ -60,13 +72,13 @@ def get_results(html):
             author = "".join(map(lambda z: str(remove_non_ascii(z.string)),
                                  title_div.span.contents)).lstrip()[3:]
 
-        # Remove $ sign and return amount as a float.
+        # Remove $ sign and return amount as a float
         new_price = 0.
         if new_price_div is not None:
-            new_price = float(str(new_price_div.span.string)[1:])
+            new_price = float(float_of_money(new_price_div.span.string))
         used_price = 0.
         if used_price_div is not None and used_price_div.div.span is not None:
-            used_price = float(str(used_price_div.div.span.string)[1:])
+            used_price = float(float_of_money(used_price_div.div.span.string))
 
         # Create a result object to encapsulate the fields that we want
         result = Result(link, title, author, new_price, used_price)
