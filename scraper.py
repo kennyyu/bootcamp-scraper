@@ -8,8 +8,7 @@ AMAZON_URL = "http://www.amazon.com/s/?keywords="
 
 # Specify command line arguments
 argparser = argparse.ArgumentParser("Web scraper for Amazon")
-argparser.add_argument("-s", "--search", type=str, dest="search",
-                       required=True, help="search to scrape")
+argparser.add_argument("search", type=str, help="search to scrape")
 argparser.add_argument("-o", "--outfile", type=str, dest="outfile",
                        default="data.csv", help="out file for csv data")
 argparser.add_argument("-p", "--page", type=int, dest="page",
@@ -104,10 +103,12 @@ def main(search, outfile, page, append):
         writer.writeheader()
 
     # Keep scraping all the pages until we find a page with no results.
+    print "Searching for '%s'" % search
     total = 0
     while True:
-        print "Scraping page %d..." % page
-        urlobject = urllib.urlopen(AMAZON_URL + search + "&page=" + str(page))
+        url = AMAZON_URL + search + "&page=" + str(page)
+        print "Scraping page %d (url: %s)..." % (page, url)
+        urlobject = urllib.urlopen(url)
         results = get_results(urlobject.read())
         nresults = len(results)
         if nresults == 0:
