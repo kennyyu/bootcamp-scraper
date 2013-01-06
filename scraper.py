@@ -12,6 +12,10 @@ argparser.add_argument("-s", "--search", type=str, dest="search",
                        required=True, help="search to scrape")
 argparser.add_argument("-o", "--outfile", type=str, dest="outfile",
                        default="data.csv", help="out file for csv data")
+argparser.add_argument("-p", "--page", type=int, dest="page",
+                       default=1, help="page number to start scraping")
+argparser.add_argument("-a", "--append", dest="append", action="store_true",
+                       default=False, help="append to output file")
 
 def remove_non_ascii(s):
     """ Remove non ascii characters (e.g. unicode). """
@@ -90,16 +94,16 @@ def write_results(writer, results):
     for result in results:
         writer.writerow(result.__dict__) # get dict of the object's attributes
 
-def main(search, outfile):
+def main(search, outfile, page, append):
     # Create file to append csv results and write the header columns
-    csvfile = open(outfile, "wb")
+    csvfile = open(outfile, "wb") if not append else open(outfile, "ab")
     writer = csv.DictWriter(csvfile,
                             ["title", "author", "link",
                              "new_price", "used_price"])
-    writer.writeheader()
+    if not append:
+        writer.writeheader()
 
     # Keep scraping all the pages until we find a page with no results.
-    page = 1
     total = 0
     while True:
         print "Scraping page %d..." % page
@@ -122,4 +126,4 @@ def main(search, outfile):
 
 if __name__ == "__main__":
     args = vars(argparser.parse_args())
-    main(search=args["search"], outfile=args["outfile"])
+    main(**args)
