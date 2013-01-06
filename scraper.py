@@ -29,7 +29,8 @@ class Result:
 
     def __str__(self):
         return "link: %s\ntitle: %s\nauthor: %s\nnew:  %f\nused: %f" % \
-            (self.link, self.title, self.author, self.new_price, self.used_price)
+            (self.link, self.title, self.author,
+             self.new_price, self.used_price)
 
 def is_result_div(tag):
     """ Returns true for divs with ids starting with 'result_'. """
@@ -64,7 +65,7 @@ def get_results(html):
         if new_price_div is not None:
             new_price = float(str(new_price_div.span.string)[1:])
         used_price = 0.
-        if used_price_div is not None:
+        if used_price_div is not None and used_price_div.div.span is not None:
             used_price = float(str(used_price_div.div.span.string)[1:])
 
         # Create a result object to encapsulate the fields that we want
@@ -87,14 +88,22 @@ def main(search, outfile):
 
     # Keep scraping all the pages until we find a page with no results.
     page = 1
+    total = 0
     while True:
+        print "Scraping page %d..." % page
         urlobject = urllib.urlopen(AMAZON_URL + search + "&page=" + str(page))
         results = get_results(urlobject.read())
-        if len(results) == 0:
+        nresults = len(results)
+        if nresults == 0:
+            print "Done!"
             break
         else:
             write_results(writer, results)
+            csvfile.flush()
             page += 1
+            total += nresults
+            print "Scraped %d results from page %d, total results: %d" % \
+                (nresults, page, total)
 
     # Close our file handle
     csvfile.close()
