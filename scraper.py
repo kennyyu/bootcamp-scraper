@@ -45,6 +45,7 @@ def get_results(html):
     soup = bs4.BeautifulSoup(html)
     result_divs = soup.find_all(is_result_div)
     for result_div in result_divs:
+        print result_div
         title_div = result_div.find(class_="productTitle")
         new_price_div = result_div.find(class_="newPrice")
         used_price_div = result_div.find(class_="usedNewPrice")
@@ -54,8 +55,10 @@ def get_results(html):
         title = str(remove_non_ascii(title_div.a.string)).lstrip()
 
         # Concatenate all the text elements together into a string
-        author = "".join(map(lambda z: str(remove_non_ascii(z.string)),
-                             title_div.span.contents)).lstrip()[3:]
+        author = ""
+        if title_div.span is not None:
+            author = "".join(map(lambda z: str(remove_non_ascii(z.string)),
+                                 title_div.span.contents)).lstrip()[3:]
 
         # Remove $ sign and return amount as a float.
         new_price = 0.
